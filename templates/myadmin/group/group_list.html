@@ -1,0 +1,48 @@
+{% extends 'myadmin/base/content_base.html'%}
+{% load static %}
+{% block page_header %}
+系统设置
+{% endblock %}
+{% block page_option %}
+权限分组
+{% endblock %}
+{% block content %}
+<div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">分组列表</h3>
+            <div class="box-tools">
+            </div>
+        </div>
+        <!-- /.box-header -->
+
+        <div class="box-body">
+            <div style="margin-bottom: 10px">
+
+            </div>
+
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <th>#</th>
+                    <th>组名</th>
+                    <th>菜单</th>
+                </tr>
+                {% for group in groups %}
+                    <tr>
+                        <td style="width: 40px" data-url="{% url 'admin:update_group' group.id %}"><a
+                                href="#">{{ forloop.counter }}</a></td>
+                        <td>{{ group.name }}</td>
+                        <td>
+                            {% for permis in group.permissions.all %}
+                                {{ permis.name }}/
+                            {% empty %}
+                                暂未分配权限
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'myadmin/base/content_base.html' %}
+{% load admin_customer_filters %}
+{% load news_template_filters %}
+{% load static %}
+{% block page_header %}
+系统数设置
+{% endblock %}
+{% block page_option %}
+用户管理
+{% endblock %}
+{% block content %}
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">用户列表</h3>
+        </div>
+        <!-- /.box-header -->
+
+        <div class="box-body">
+            <div style="margin-bottom: 10px">
+                <form class="form-inline user-query">
+                    <div class="form-group">
+                        <label for="">用户名</label>
+                        <input type="text" class="form-control" name="username" value="{{ username }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">分组</label>
+                        <select name="group" id="" class="form-control">
+                            <option value="">所有</option>
+                            {% for group in groups %}
+
+                                <option {% if groups__id == group.id %}selected{% endif %}
+                                        value="{{ group.id }}">{{ group.name }}</option>
+
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">是否员工</label>
+                        <select name="is_staff" id="" class="form-control">
+                            <option value="">所有</option>
+
+                            <option {% if is_staff is True %}selected{% endif %} value="1">是</option>
+                            <option {% if is_staff is False %}selected{% endif %} value="0">否</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">是否管理员</label>
+                        <select name="is_superuser" id="" class="form-control">
+                            <option value="">所有</option>
+                            <option {% if is_superuser is True %}selected{% endif %} value="1">是</option>
+                            <option {% if is_superuser is False %}selected{% endif %} value="0">否</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-info query">查询</button>
+                    <button type="button" class="btn btn-default reset">重置</button>
+                </form>
+            </div>
+
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <th>#</th>
+                    <th>用户名</th>
+                    <th>电话</th>
+                    <th>是否可用</th>
+                    <th>是否员工</th>
+                    <th>是否管理员</th>
+                </tr>
+                {% for user in users %}
+                    <tr>
+                        <td style="width: 40px" data-url="{% url 'myadmin:user_update' user.id %}">
+                            <a href="#" data-id="{{ user.id }}">{{ forloop.counter }}</a></td>
+
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.mobile }}</td>
+                        <td>{% if user.is_active %}是{% else %}否{% endif %}</td>
+                        <td>{% if user.is_staff %}是{% else %}否{% endif %}</td>
+                        <td>{% if user.is_superuser %}是{% else %}否{% endif %}</td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+            </table>
+
+
+        </div>
+        <!-- 分页 -->
+        <div class="box-footer clearfix">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">总共：{{ users.paginator.count }}条 第{{ users.start_index }}到{{ users.end_index }}条
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        <li {% if not users.has_previous %}class="disabled"{% endif %} data-page="{{ users.number|add:-1 }}"><a href="#">«</a></li>
+                    {% for n in users|page_bar %}
+                        <li {% if n == users.number %}class="active" {% endif %} data-page="{{ n }}"><a href="#">{{ n }}</a></li>
+                    {% endfor %}
+                        <li {% if not users.has_next %}class="disabled"{% endif %} data-page="{{ users.number|add:1 }}"><a href="#">»</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/myadmin/user/user_list.js' %}"></script>
+{% endblock %}
